@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verso l'orale · Quiz esame avvocato</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,650;0,9..144,750;1,9..144,500&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F1EDE2;
+    --sheet:#FCFAF3;
+    --ink:#211F1A;
+    --ink-soft:#5C574B;
+    --rule:#D9D2BF;
+    --bordeaux:#7D2233;
+    --navy:#274A78;
+    --green:#2F6B45;
+    --ochre:#9A5B22;
+    --violet:#5B4A7E;
+    --char:#43413B;
+    --serif:"Fraunces", Georgia, serif;
+    --mono:"Courier Prime","Courier New",monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+  }
+  body{
+    background:var(--paper);
+    background-image:radial-gradient(ellipse at 50% -10%, rgba(255,255,255,.7), rgba(255,255,255,0) 60%);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.55;
+    min-height:100vh;
+    padding:32px 16px 64px;
+  }
+  a{color:var(--navy)}
+  .wrap{max-width:780px;margin:0 auto}
+
+  /* ---- foglio "uso bollo": doppia riga di margine a sinistra ---- */
+  .sheet{
+    position:relative;
+    background:var(--sheet);
+    border:1px solid var(--rule);
+    border-radius:6px;
+    box-shadow:0 1px 2px rgba(33,31,26,.06),0 12px 32px -16px rgba(33,31,26,.25);
+    padding:40px 44px 44px 64px;
+    overflow:hidden;
+  }
+  .sheet::before,.sheet::after{
+    content:"";position:absolute;top:0;bottom:0;width:1px;
+    background:rgba(125,34,51,.38);
+  }
+  .sheet::before{left:34px}
+  .sheet::after{left:40px}
+  @media (max-width:560px){
+    body{padding:16px 8px 48px}
+    .sheet{padding:28px 20px 32px 44px}
+    .sheet::before{left:20px}
+    .sheet::after{left:25px}
+  }
+
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:.72rem;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--bordeaux);
+    margin-bottom:10px;
+  }
+  h1{
+    font-family:var(--serif);
+    font-weight:750;
+    font-size:clamp(1.9rem,5vw,2.7rem);
+    line-height:1.12;
+    letter-spacing:-.01em;
+    margin-bottom:10px;
+  }
+  .lede{color:var(--ink-soft);max-width:56ch;margin-bottom:28px}
+  .divider{border:none;border-top:1px solid var(--rule);margin:26px 0}
+
+  .label{
+    font-family:var(--mono);
+    font-size:.72rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-bottom:12px;
+  }
+
+  /* ---- selezione materie: dorsi dei codici ---- */
+  .subs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:26px}
+  @media (max-width:560px){.subs{grid-template-columns:1fr}}
+  .sub{
+    display:flex;align-items:center;gap:10px;
+    background:#fff;
+    border:1px solid var(--rule);
+    border-left:7px solid var(--sub,#888);
+    border-radius:4px;
+    padding:11px 12px;
+    cursor:pointer;
+    user-select:none;
+    transition:box-shadow .15s ease, transform .15s ease;
+  }
+  .sub:hover{box-shadow:0 3px 10px -4px rgba(33,31,26,.3);transform:translateY(-1px)}
+  .sub input{accent-color:var(--sub,#888);width:16px;height:16px;flex:none}
+  .sub .t{font-size:.92rem;font-weight:600}
+  .sub .c{font-family:var(--mono);font-size:.7rem;color:var(--ink-soft);display:block}
+  .sub.off{opacity:.45}
+
+  /* ---- numero di domande ---- */
+  .nrow{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:30px}
+  .nbtn{
+    font-family:var(--mono);font-size:.85rem;
+    background:#fff;border:1px solid var(--rule);border-radius:4px;
+    padding:8px 16px;cursor:pointer;color:var(--ink);
+    transition:all .15s ease;
+  }
+  .nbtn:hover{border-color:var(--ink)}
+  .nbtn.on{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+
+  .btn{
+    display:inline-block;
+    font-family:var(--sans);font-weight:700;font-size:.95rem;
+    letter-spacing:.03em;
+    background:var(--bordeaux);color:#fff;
+    border:none;border-radius:4px;
+    padding:13px 26px;cursor:pointer;
+    transition:transform .12s ease, box-shadow .12s ease, background .12s ease;
+  }
+  .btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px -6px rgba(125,34,51,.55)}
+  .btn:active{transform:translateY(0)}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--rule)}
+  .btn.ghost:hover{border-color:var(--ink);box-shadow:none}
+  .btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+  button:focus-visible,.sub:focus-within,a:focus-visible{outline:3px solid var(--navy);outline-offset:2px}
+
+  .hint{font-family:var(--mono);font-size:.72rem;color:var(--ink-soft);margin-top:14px}
+
+  /* ---- quiz ---- */
+  .qhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:6px;flex-wrap:wrap}
+  .counter{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;color:var(--ink-soft)}
+  .chip{
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
+    color:#fff;background:var(--sub,#888);
+    padding:4px 10px;border-radius:3px;
+  }
+  .bar{height:4px;background:var(--rule);border-radius:2px;overflow:hidden;margin:10px 0 26px}
+  .bar i{display:block;height:100%;background:var(--sub,var(--bordeaux));width:0;transition:width .3s ease}
+
+  .qtext{
+    font-family:var(--serif);font-weight:650;
+    font-size:clamp(1.15rem,2.6vw,1.45rem);
+    line-height:1.35;margin-bottom:22px;
+  }
+  .opts{display:flex;flex-direction:column;gap:10px;margin-bottom:8px}
+  .opt{
+    display:flex;gap:12px;align-items:flex-start;text-align:left;
+    width:100%;
+    background:#fff;border:1px solid var(--rule);border-radius:4px;
+    padding:12px 14px;cursor:pointer;
+    font-family:var(--sans);font-size:.95rem;line-height:1.45;color:var(--ink);
+    transition:border-color .12s ease, box-shadow .12s ease;
+  }
+  .opt:hover:not(:disabled){border-color:var(--ink);box-shadow:0 3px 10px -6px rgba(33,31,26,.4)}
+  .opt:disabled{cursor:default}
+  .opt .k{
+    flex:none;font-family:var(--mono);font-size:.75rem;font-weight:700;
+    width:24px;height:24px;border:1px solid var(--rule);border-radius:3px;
+    display:flex;align-items:center;justify-content:center;margin-top:1px;
+    color:var(--ink-soft);
+  }
+  .opt.right{border-color:var(--green);background:#EDF4EE;box-shadow:inset 0 0 0 1px var(--green)}
+  .opt.right .k{background:var(--green);border-color:var(--green);color:#fff}
+  .opt.wrong{border-color:var(--bordeaux);background:#F7ECEC;box-shadow:inset 0 0 0 1px var(--bordeaux)}
+  .opt.wrong .k{background:var(--bordeaux);border-color:var(--bordeaux);color:#fff}
+  .opt.faded{opacity:.55}
+
+  .explain{
+    display:none;
+    border-left:3px solid var(--navy);
+    background:#F2F3EE;
+    padding:14px 16px;border-radius:0 4px 4px 0;
+    margin:18px 0 22px;
+    font-size:.92rem;
+  }
+  .explain .label{margin-bottom:6px;color:var(--navy)}
+  .explain.show{display:block;animation:fadeUp .25s ease}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+  .qfoot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  .quit{background:none;border:none;font-family:var(--mono);font-size:.75rem;color:var(--ink-soft);cursor:pointer;text-decoration:underline;padding:6px}
+
+  /* ---- risultati ---- */
+  .verdict{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:6px}
+  .score{font-family:var(--serif);font-weight:750;font-size:clamp(2.6rem,8vw,4rem);line-height:1}
+  .score small{font-size:.4em;color:var(--ink-soft);font-weight:500}
+  .trent{font-family:var(--mono);font-size:.8rem;color:var(--ink-soft);margin-top:6px}
+
+  .stamp{
+    flex:none;
+    font-family:var(--mono);font-weight:700;
+    font-size:1rem;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--stamp,var(--green));
+    border:3px double var(--stamp,var(--green));
+    border-radius:50%;
+    width:128px;height:128px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+    transform:rotate(-9deg);
+    opacity:.88;
+    animation:stampIn .35s cubic-bezier(.2,1.4,.4,1);
+    text-align:center;padding:8px;
+  }
+  .stamp .sm{font-size:.55rem;letter-spacing:.2em;font-weight:400}
+  @keyframes stampIn{from{transform:rotate(-9deg) scale(1.7);opacity:0}to{transform:rotate(-9deg) scale(1);opacity:.88}}
+
+  .bd{margin:22px 0 6px}
+  .bd .row{display:grid;grid-template-columns:minmax(140px,220px) 1fr 64px;gap:12px;align-items:center;margin-bottom:9px;font-size:.85rem}
+  @media (max-width:560px){.bd .row{grid-template-columns:1fr 1fr 56px}}
+  .bd .name{font-weight:600}
+  .bd .track{height:8px;background:var(--rule);border-radius:4px;overflow:hidden}
+  .bd .track i{display:block;height:100%;background:var(--sub,#888)}
+  .bd .val{font-family:var(--mono);font-size:.75rem;color:var(--ink-soft);text-align:right}
+
+  .review{margin-top:8px}
+  .rev{
+    border:1px solid var(--rule);border-left:5px solid var(--sub,#888);
+    border-radius:4px;background:#fff;
+    padding:14px 16px;margin-bottom:12px;font-size:.9rem;
+  }
+  .rev .q{font-family:var(--serif);font-weight:650;font-size:1rem;margin-bottom:8px}
+  .rev .ok{color:var(--green);font-weight:600}
+  .rev .ko{color:var(--bordeaux);text-decoration:line-through}
+  .rev .e{color:var(--ink-soft);margin-top:6px;font-size:.85rem}
+  .allright{
+    font-family:var(--serif);font-style:italic;font-size:1.1rem;
+    color:var(--green);padding:10px 0;
+  }
+  .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+
+  .foot{
+    text-align:center;margin-top:26px;
+    font-family:var(--mono);font-size:.72rem;color:var(--ink-soft);
+  }
+  .hidden{display:none !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="sheet">
+
+    <!-- ============ SCHERMATA INIZIALE ============ -->
+    <section id="screen-start">
+      <p class="eyebrow">Esame di abilitazione forense · Prova orale</p>
+      <h1>Verso l'orale</h1>
+      <p class="lede">Un archivio di domande in stile orale, con spiegazione e riferimento normativo per ciascuna risposta. Ogni avvio genera un quiz diverso: domande pescate a caso e risposte mescolate.</p>
+
+      <p class="label">1 · Scegli le materie</p>
+      <div class="subs" id="subs"></div>
+
+      <p class="label">2 · Quante domande?</p>
+      <div class="nrow" id="nrow">
+        <button class="nbtn" data-n="10">10</button>
+        <button class="nbtn on" data-n="20">20</button>
+        <button class="nbtn" data-n="40">40</button>
+        <button class="nbtn" data-n="0">Tutte</button>
+      </div>
+
+      <button class="btn" id="btn-start">Inizia il quiz →</button>
+      <p class="hint" id="bank-hint"></p>
+    </section>
+
+    <!-- ============ QUIZ ============ -->
+    <section id="screen-quiz" class="hidden">
+      <div class="qhead">
+        <span class="counter" id="counter"></span>
+        <span class="chip" id="chip"></span>
+      </div>
+      <div class="bar"><i id="bar-fill"></i></div>
+      <p class="qtext" id="qtext"></p>
+      <div class="opts" id="opts"></div>
+      <div class="explain" id="explain">
+        <p class="label" id="explain-label">Spiegazione</p>
+        <p id="explain-text"></p>
+      </div>
+      <div class="qfoot">
+        <button class="quit" id="btn-quit">interrompi ed esci</button>
+        <button class="btn" id="btn-next" disabled>Avanti →</button>
+      </div>
+    </section>
+
+    <!-- ============ RISULTATI ============ -->
+    <section id="screen-result" class="hidden">
+      <p class="eyebrow">Verbale di fine simulazione</p>
+      <div class="verdict">
+        <div>
+          <div class="score" id="score"></div>
+          <div class="trent" id="trent"></div>
+        </div>
+        <div class="stamp" id="stamp"><span id="stamp-main"></span><span class="sm" id="stamp-sub"></span></div>
+      </div>
+
+      <hr class="divider">
+      <p class="label">Andamento per materia</p>
+      <div class="bd" id="breakdown"></div>
+
+      <hr class="divider">
+      <p class="label">Da ripassare</p>
+      <div class="review" id="review"></div>
+
+      <div class="actions">
+        <button class="btn" id="btn-again">Nuovo quiz casuale ↺</button>
+        <button class="btn ghost" id="btn-settings">Cambia impostazioni</button>
+      </div>
+    </section>
+
+  </div>
+  <p class="foot">preparato con cura per una futura avvocata · in bocca al lupo ⚖</p>
+</div>
+
+<script>
+"use strict";
+
+const SUBJECTS = {
+  civ: { name: "Diritto civile",                      short: "Civile",      color: "#8C2332" },
+  pen: { name: "Diritto penale",                      short: "Penale",      color: "#274A78" },
+  pcv: { name: "Diritto processuale civile",          short: "Proc. civile",color: "#9A5B22" },
+  ppn: { name: "Diritto processuale penale",          short: "Proc. penale",color: "#5B4A7E" },
+  amm: { name: "Diritto amministrativo",              short: "Amministrativo", color: "#3F6148" },
+  deo: { name: "Ordinamento e deontologia forense",   short: "Deontologia", color: "#43413B" }
+};
+
+/* In ogni domanda la prima risposta dell'array "a" è quella corretta:
+   l'ordine viene rimescolato a ogni visualizzazione. */
+const BANK = [
+/* ================= DIRITTO CIVILE ================= */
+{m:"civ",q:"Quali sono i requisiti essenziali del contratto?",a:["Accordo delle parti, causa, oggetto e forma, quando prescritta a pena di nullità","Consenso, prezzo, termine e condizione","Accordo, motivo, oggetto e trascrizione","Volontà, causa, consegna della cosa e forma scritta"],e:"Art. 1325 c.c.: accordo, causa, oggetto e forma quando è richiesta dalla legge a pena di nullità (forma ad substantiam)."},
+{m:"civ",q:"Quale affermazione distingue correttamente nullità e annullabilità del contratto?",a:["La nullità è imprescrittibile, rilevabile d'ufficio e può farla valere chiunque vi abbia interesse; l'annullabilità si prescrive di regola in 5 anni e la legittimazione è relativa","La nullità si prescrive in 10 anni, l'annullabilità è imprescrittibile","Entrambe sono rilevabili d'ufficio e imprescrittibili","L'annullabilità è rilevabile d'ufficio, la nullità solo su eccezione di parte"],e:"Artt. 1421-1422 c.c. (nullità: legittimazione assoluta, rilevabilità d'ufficio, imprescrittibilità dell'azione) e artt. 1441-1442 c.c. (annullabilità: legittimazione relativa, prescrizione quinquennale)."},
+{m:"civ",q:"Qual è il termine di prescrizione ordinaria dei diritti?",a:["Dieci anni, salvo i casi in cui la legge dispone diversamente","Cinque anni in ogni caso","Venti anni, salvo deroghe","I diritti patrimoniali non si prescrivono mai"],e:"Art. 2946 c.c.: la prescrizione ordinaria è decennale. La proprietà, invece, non si perde per non uso (si perde semmai per usucapione altrui)."},
+{m:"civ",q:"L'usucapione ordinaria dei beni immobili si compie con il possesso continuato per…",a:["Venti anni","Dieci anni","Cinque anni","Quindici anni"],e:"Art. 1158 c.c.: venti anni. L'usucapione abbreviata decennale (art. 1159 c.c.) richiede in più titolo astrattamente idoneo, buona fede e trascrizione del titolo."},
+{m:"civ",q:"La responsabilità extracontrattuale ex art. 2043 c.c. richiede:",a:["Un fatto doloso o colposo che cagiona ad altri un danno ingiusto, con nesso di causalità","Necessariamente la violazione di un obbligo contrattuale preesistente","Solo il dolo, mai la semplice colpa","Un danno patrimoniale certo, essendo esclusi i danni non patrimoniali"],e:"Art. 2043 c.c. L'azione si prescrive in 5 anni (art. 2947 c.c.; 2 anni per i danni da circolazione di veicoli)."},
+{m:"civ",q:"Secondo le Sezioni Unite (n. 13533/2001), nell'azione per inadempimento contrattuale il creditore deve…",a:["Provare la fonte del suo diritto e allegare l'inadempimento; spetta al debitore provare di aver adempiuto o la causa a lui non imputabile","Provare in modo rigoroso sia il titolo sia l'inadempimento del debitore","Solo allegare il danno, senza provare il titolo","Provare la colpa grave del debitore"],e:"Cass. SU 13533/2001: onere della prova alleggerito per il creditore, sia che agisca per adempimento, risoluzione o risarcimento."},
+{m:"civ",q:"La regola \"possesso vale titolo\" (art. 1153 c.c.) consente l'acquisto a non domino quando:",a:["Si tratta di beni mobili, vi è un titolo astrattamente idoneo e la buona fede al momento della consegna","Si tratta di qualsiasi bene, anche immobile, purché vi sia buona fede","Si tratta di beni mobili registrati con trascrizione del titolo","Il possesso è durato almeno dieci anni"],e:"Art. 1153 c.c.: opera solo per i beni mobili non registrati; richiede consegna, buona fede e titolo idoneo al trasferimento."},
+{m:"civ",q:"Se più debitori sono obbligati per la medesima prestazione, l'obbligazione si presume:",a:["Solidale dal lato passivo, se dalla legge o dal titolo non risulta diversamente","Parziaria, salvo patto contrario","Alternativa","Indivisibile in ogni caso"],e:"Art. 1294 c.c.: i condebitori sono tenuti in solido, se dalla legge o dal titolo non risulta diversamente."},
+{m:"civ",q:"La clausola penale manifestamente eccessiva:",a:["Può essere ridotta equamente dal giudice anche d'ufficio","Può essere ridotta solo su domanda di parte","È nulla e travolge l'intero contratto","Non è mai riducibile, per il principio di autonomia contrattuale"],e:"Art. 1384 c.c.; Cass. SU 18128/2005 ha riconosciuto la riducibilità anche d'ufficio, quale potere fondato sul controllo di meritevolezza."},
+{m:"civ",q:"In caso di caparra confirmatoria, se la parte che ha ricevuto la caparra è inadempiente, l'altra può:",a:["Recedere dal contratto ed esigere il doppio della caparra","Trattenere la caparra ricevuta","Solo chiedere la risoluzione giudiziale","Chiedere unicamente l'adempimento coattivo"],e:"Art. 1385, co. 2, c.c.: chi ha dato la caparra può recedere ed esigerne il doppio; chi l'ha ricevuta, se l'altra parte è inadempiente, recede ritenendola. Resta salva la via ordinaria di risoluzione e risarcimento."},
+{m:"civ",q:"In caso di inadempimento del contratto preliminare, la parte adempiente può ottenere:",a:["Una sentenza costitutiva che produce gli effetti del contratto non concluso (art. 2932 c.c.)","Solo il risarcimento del danno","Un decreto ingiuntivo per la stipula","La conversione automatica del preliminare in definitivo"],e:"Art. 2932 c.c.: esecuzione in forma specifica dell'obbligo di concludere il contratto, se possibile e non esclusa dal titolo. Il preliminare richiede la stessa forma del definitivo (art. 1351 c.c.)."},
+{m:"civ",q:"Nella vendita disciplinata dal codice civile, la garanzia per i vizi va fatta valere con:",a:["Denuncia entro 8 giorni dalla scoperta e azione entro un anno dalla consegna","Denuncia entro 60 giorni e azione entro 10 anni","Denuncia entro 2 mesi e azione entro 26 mesi in ogni caso","Semplice azione entro 5 anni, senza onere di denuncia"],e:"Art. 1495 c.c.: decadenza di 8 giorni dalla scoperta (salvo patto o legge diversa) e prescrizione annuale dalla consegna. Termini diversi valgono nelle vendite di consumo (cod. consumo)."},
+{m:"civ",q:"Nella simulazione relativa, tra le parti:",a:["Ha effetto il contratto dissimulato, purché ne sussistano i requisiti di sostanza e di forma","Ha sempre effetto il contratto simulato","Entrambi i contratti sono nulli","Ha effetto il contratto simulato solo se trascritto"],e:"Art. 1414, co. 2, c.c. Il contratto simulato non produce effetti tra le parti; i terzi di buona fede sono tutelati (artt. 1415-1416 c.c.)."},
+{m:"civ",q:"Chi sono i legittimari?",a:["Il coniuge, i figli e, in mancanza di figli, gli ascendenti","Tutti i parenti entro il sesto grado","Solo i figli","Il coniuge, i fratelli e i nipoti"],e:"Art. 536 c.c.: legittimari sono coniuge (o unito civilmente), figli e ascendenti (questi ultimi solo se non vi sono figli). A loro è riservata una quota di eredità intangibile."},
+{m:"civ",q:"Qual è l'effetto principale dell'accettazione dell'eredità con beneficio d'inventario?",a:["La separazione del patrimonio del defunto da quello dell'erede, che risponde dei debiti intra vires hereditatis","La rinuncia implicita ai legati","L'acquisto dell'eredità sotto condizione sospensiva","L'esonero totale dell'erede da ogni debito ereditario"],e:"Art. 490 c.c. È obbligatoria per accettare le eredità devolute a minori, incapaci e persone giuridiche (artt. 471 ss. c.c.)."},
+{m:"civ",q:"Il contratto concluso dal falsus procurator è:",a:["Inefficace nei confronti dello pseudo-rappresentato, ma suscettibile di ratifica","Nullo per difetto di accordo","Annullabile entro cinque anni","Valido ed efficace, salvo revoca"],e:"Artt. 1398-1399 c.c.: il negozio è in stato di inefficacia sanabile con la ratifica; il falso rappresentante risponde del danno da lesione dell'affidamento (interesse negativo)."},
+{m:"civ",q:"In mancanza di diversa convenzione, il regime patrimoniale legale della famiglia è:",a:["La comunione legale dei beni","La separazione dei beni","Il fondo patrimoniale","La comunione convenzionale"],e:"Art. 159 c.c.: il regime legale, in mancanza di diversa convenzione, è la comunione dei beni (artt. 177 ss. c.c.)."},
+{m:"civ",q:"La donazione, di regola, richiede a pena di nullità:",a:["L'atto pubblico con la presenza di due testimoni","La semplice scrittura privata","La scrittura privata autenticata","Nessuna forma, essendo sufficiente la consegna"],e:"Art. 782 c.c. Fa eccezione la donazione di modico valore di beni mobili, valida con la sola tradizione (art. 783 c.c.)."},
+{m:"civ",q:"Il contratto autonomo di garanzia si distingue dalla fideiussione perché:",a:["Il garante deve pagare \"a prima richiesta\" senza poter opporre le eccezioni relative al rapporto principale, salvo l'exceptio doli","È sempre gratuito","Richiede la forma dell'atto pubblico","Garantisce solo obbligazioni future"],e:"Cass. SU 3947/2010: la clausola \"a prima richiesta e senza eccezioni\" esclude l'accessorietà tipica della fideiussione (art. 1945 c.c.)."},
+{m:"civ",q:"Secondo le Sezioni Unite di San Martino (2008), il danno non patrimoniale è risarcibile:",a:["Nei casi previsti dalla legge e quando siano lesi diritti inviolabili della persona costituzionalmente garantiti, purché l'offesa sia grave e il danno non futile","Sempre e comunque, per qualsiasi disagio","Solo in presenza di reato","Mai al di fuori dell'art. 185 c.p."],e:"Art. 2059 c.c.; Cass. SU 26972/2008: lettura costituzionalmente orientata, con filtri della gravità della lesione e serietà del danno (no danni bagatellari)."},
+{m:"civ",q:"Nel conflitto tra più acquirenti dello stesso immobile dal medesimo venditore prevale:",a:["Chi ha trascritto per primo il proprio acquisto, anche se il suo titolo è successivo","Chi ha concluso per primo il contratto","Chi ha pagato il prezzo più alto","Chi è entrato per primo nel possesso"],e:"Art. 2644 c.c.: la trascrizione risolve il conflitto tra aventi causa dallo stesso autore; è strumento di opponibilità, non requisito di validità."},
+{m:"civ",q:"Qual è l'effetto dell'azione revocatoria ordinaria (art. 2901 c.c.) vittoriosa?",a:["L'inefficacia relativa dell'atto dispositivo nei confronti del solo creditore che ha agito","La nullità assoluta dell'atto","L'annullamento dell'atto con effetti verso tutti","Il ritorno automatico del bene nel patrimonio del debitore"],e:"L'atto resta valido tra le parti ma è inopponibile al creditore, che può aggredire il bene con l'esecuzione anche presso il terzo (art. 2902 c.c.)."},
+{m:"civ",q:"La diffida ad adempiere (art. 1454 c.c.) richiede l'assegnazione di un termine:",a:["Congruo e comunque, di regola, non inferiore a quindici giorni, con dichiarazione che decorso inutilmente il contratto s'intenderà risolto","Non inferiore a trenta giorni","Libero, anche di un giorno","Fissato necessariamente dal giudice"],e:"Art. 1454 c.c.: decorso il termine senza adempimento, il contratto è risolto di diritto. La risoluzione presuppone comunque un inadempimento di non scarsa importanza (art. 1455 c.c.)."},
+
+/* ================= DIRITTO PENALE ================= */
+{m:"pen",q:"Il principio di irretroattività della legge penale sfavorevole trova fondamento:",a:["Nell'art. 25, co. 2, Cost. e nell'art. 2 c.p.; la legge più favorevole è invece retroattiva, col limite del giudicato salvo abolitio criminis","Solo nell'art. 2 c.p., norma derogabile","Nell'art. 111 Cost.","In nessuna norma: è un principio solo giurisprudenziale"],e:"Art. 25 Cost. e art. 2 c.p.: nullum crimen sine praevia lege. In caso di abolitio criminis cessano esecuzione ed effetti penali anche dopo il giudicato."},
+{m:"pen",q:"I delitti sono puniti a titolo di colpa:",a:["Solo nei casi espressamente previsti dalla legge","Sempre, in via generale","Mai","Solo se causano un evento di danno"],e:"Art. 42, co. 2, c.p.: nei delitti la responsabilità è dolosa, salvo espressa previsione della colpa o della preterintenzione. Nelle contravvenzioni si risponde indifferentemente di dolo o colpa (co. 4)."},
+{m:"pen",q:"Secondo le Sezioni Unite \"ThyssenKrupp\" (n. 38343/2014), il dolo eventuale si distingue dalla colpa cosciente perché:",a:["L'agente non si limita ad accettare il rischio, ma aderisce all'evento, che si rappresenta come prezzo dell'azione (cd. formula di Frank)","L'agente prevede l'evento ma confida di evitarlo","Richiede sempre la premeditazione","È configurabile solo nei reati omissivi"],e:"Nella colpa cosciente l'evento è previsto ma l'agente confida per circostanze concrete di evitarlo; nel dolo eventuale vi è adesione/accettazione dell'evento."},
+{m:"pen",q:"Il tentativo punibile (art. 56 c.p.) richiede:",a:["Atti idonei diretti in modo non equivoco a commettere un delitto; la pena è ridotta da un terzo a due terzi","Qualsiasi atto preparatorio","La sola intenzione manifestata","Atti idonei anche rispetto alle contravvenzioni"],e:"Art. 56 c.p. Il tentativo non è configurabile nei delitti colposi né nelle contravvenzioni; la desistenza volontaria esclude la punibilità (salvi gli atti già compiuti)."},
+{m:"pen",q:"La legittima difesa (art. 52 c.p.) richiede:",a:["La necessità di difendere un diritto proprio o altrui contro il pericolo attuale di un'offesa ingiusta, con proporzione tra difesa e offesa","Solo la difesa della propria vita","Un pericolo anche futuro ed eventuale","La fuga impossibile come requisito espresso"],e:"Art. 52 c.p. Nel domicilio opera la presunzione di proporzione introdotta nel 2006 e ampliata nel 2019, ma restano necessari pericolo attuale e offesa ingiusta."},
+{m:"pen",q:"Nel concorso di persone nel reato (art. 110 c.p.):",a:["Ciascun concorrente soggiace alla pena prevista per il reato, essendo sufficiente anche un contributo solo morale","Risponde solo l'autore materiale","Il concorso morale non è mai punibile","È sempre necessario un previo accordo scritto"],e:"Art. 110 c.p.: pari responsabilità dei concorrenti, salve le circostanze aggravanti o attenuanti (artt. 111-114 c.p.). Il contributo può essere materiale o morale (istigazione, rafforzamento del proposito)."},
+{m:"pen",q:"Il reato continuato (art. 81 cpv. c.p.) comporta:",a:["L'applicazione della pena prevista per la violazione più grave aumentata fino al triplo, in presenza di un medesimo disegno criminoso","Il cumulo materiale delle pene","Una pena unica pari alla somma dei minimi edittali","L'assorbimento dei reati minori"],e:"Cumulo giuridico: più violazioni, anche di norme diverse e in tempi diversi, unificate dal medesimo disegno criminoso."},
+{m:"pen",q:"La recidiva può essere contestata:",a:["Solo a chi, dopo una condanna per delitto non colposo, commette un altro delitto non colposo","Per qualsiasi reato, anche contravvenzionale","Solo per reati della stessa indole","Anche per delitti colposi"],e:"Art. 99 c.p., come modificato dalla legge ex Cirielli (L. 251/2005): la recidiva riguarda esclusivamente i delitti non colposi."},
+{m:"pen",q:"Quanto all'imputabilità del minore:",a:["Il minore di 14 anni non è mai imputabile; tra i 14 e i 18 anni l'imputabilità va accertata in concreto","Il minore di 16 anni non è mai imputabile","Tra i 14 e i 18 anni l'imputabilità è sempre presunta","Il minore è sempre imputabile se il reato è grave"],e:"Artt. 97 e 98 c.p.: sotto i 14 anni presunzione assoluta di non imputabilità; tra 14 e 18 il giudice accerta la capacità di intendere e di volere al momento del fatto."},
+{m:"pen",q:"Ciò che distingue il furto dall'appropriazione indebita è che:",a:["Nel furto l'agente sottrae la cosa a chi la detiene; nell'appropriazione indebita l'agente ha già il possesso della cosa e se ne appropria","Il furto riguarda solo beni immobili","L'appropriazione indebita richiede violenza","Il furto è procedibile solo a querela in ogni caso"],e:"Artt. 624 e 646 c.p.: discrimine è il possesso preesistente della cosa da parte dell'agente nell'appropriazione indebita."},
+{m:"pen",q:"Gli elementi costitutivi della truffa (art. 640 c.p.) sono:",a:["Artifizi o raggiri, induzione in errore, atto di disposizione patrimoniale, danno altrui con ingiusto profitto","Violenza o minaccia e impossessamento","Abuso della qualità di pubblico ufficiale","Semplice menzogna, anche senza danno"],e:"Reato in contratto a cooperazione artificiosa della vittima: è l'errore indotto a determinare l'atto dispositivo dannoso."},
+{m:"pen",q:"Dopo la L. 190/2012, la differenza tra concussione e induzione indebita (art. 319-quater c.p.) sta nel fatto che:",a:["Nella concussione il pubblico agente costringe; nell'induzione indebita induce, e anche il privato che dà o promette è punito","Sono la stessa cosa","Nell'induzione indebita il privato non è mai punibile","La concussione può essere commessa da chiunque"],e:"Art. 317 c.p. (costrizione) vs art. 319-quater c.p. (induzione: il privato conserva un margine di scelta e persegue un vantaggio, perciò è punito). La corruzione è invece accordo paritario."},
+{m:"pen",q:"Quale tra le seguenti è una causa di estinzione del reato (e non della pena)?",a:["L'amnistia propria","L'indulto","La grazia","La liberazione condizionale"],e:"Art. 151 c.p.: l'amnistia propria estingue il reato. Indulto e grazia condonano in tutto o in parte la pena (art. 174 c.p.)."},
+{m:"pen",q:"Il tempo necessario a prescrivere il reato corrisponde:",a:["Al massimo della pena edittale e comunque non meno di 6 anni per i delitti e 4 per le contravvenzioni; dopo la sentenza di primo grado il corso della prescrizione cessa","A dieci anni per ogni reato","Al minimo della pena edittale","A quindici anni per i soli delitti"],e:"Art. 157 c.p.; art. 161-bis c.p. (L. 134/2021): il corso della prescrizione cessa definitivamente con la pronuncia di primo grado; nei gradi di impugnazione opera l'improcedibilità ex art. 344-bis c.p.p."},
+{m:"pen",q:"Il diritto di querela deve essere esercitato, di regola, entro:",a:["Tre mesi dalla notizia del fatto che costituisce reato","Sei mesi","Un anno","Trenta giorni"],e:"Art. 124 c.p. Termini più lunghi valgono per singoli reati (es. dodici mesi per i reati sessuali). La riforma Cartabia ha ampliato il novero dei reati procedibili a querela."},
+{m:"pen",q:"Nel concorso di circostanze eterogenee, il giudice:",a:["Effettua il giudizio di bilanciamento, dichiarando prevalenza o equivalenza tra aggravanti e attenuanti","Applica sempre prima le aggravanti e poi le attenuanti","Deve applicarle tutte cumulativamente","Ignora le circostanze generiche"],e:"Art. 69 c.p.: giudizio di comparazione; se equivalenti, si applica la pena base come se non vi fossero circostanze."},
+{m:"pen",q:"L'errore sul fatto che costituisce reato:",a:["Esclude il dolo; l'ignoranza della legge penale invece non scusa, salvo che sia inevitabile","Non ha mai rilievo","Esclude anche la colpa in ogni caso","Rileva solo nei reati contravvenzionali"],e:"Art. 47 c.p. (errore sul fatto) e art. 5 c.p. come riletto da Corte cost. 364/1988 (scusabilità della sola ignoranza inevitabile della legge penale)."},
+{m:"pen",q:"Si ha reato impossibile quando:",a:["Per l'inidoneità dell'azione o per l'inesistenza dell'oggetto è impossibile l'evento dannoso o pericoloso","L'agente desiste volontariamente","Il reato è prescritto","La vittima acconsente al fatto"],e:"Art. 49, co. 2, c.p.: la punibilità è esclusa; il giudice può applicare una misura di sicurezza."},
+{m:"pen",q:"La clausola di equivalenza dell'art. 40 cpv. c.p. (\"non impedire un evento… equivale a cagionarlo\") presuppone:",a:["Un obbligo giuridico di impedire l'evento, cioè una posizione di garanzia","Un mero dovere morale di intervento","La presenza fisica sul luogo del fatto","Un rapporto di parentela con la vittima"],e:"Fonda il reato omissivo improprio: la posizione di garanzia (di protezione o di controllo) nasce da legge, contratto o assunzione volontaria."},
+{m:"pen",q:"Dopo la riforma Cartabia, la causa di non punibilità per particolare tenuità del fatto (art. 131-bis c.p.) si applica ai reati puniti con:",a:["Pena detentiva non superiore nel minimo a due anni, sola o congiunta a pena pecuniaria","Pena detentiva non superiore nel massimo a cinque anni","Sola pena pecuniaria","Pena non superiore nel massimo a dieci anni"],e:"D.lgs. 150/2022: il parametro è ora il minimo edittale (non superiore a 2 anni); rileva anche la condotta susseguente al reato. Restano esclusioni per talune categorie di reati."},
+{m:"pen",q:"La sospensione del procedimento con messa alla prova dell'imputato adulto:",a:["È ammessa per i reati puniti con pena detentiva fino a 4 anni o per quelli a citazione diretta, e l'esito positivo estingue il reato","È ammessa per qualsiasi reato","Può essere concessa più di due volte","Sospende solo la pena, non il processo"],e:"Artt. 168-bis ss. c.p. e 464-bis ss. c.p.p.: lavoro di pubblica utilità e condotte riparatorie; l'esito positivo estingue il reato. Non può essere concessa più di una volta."},
+{m:"pen",q:"In caso di aberratio ictus monolesiva (art. 82 c.p.), chi per errore nell'uso dei mezzi di esecuzione offende una persona diversa da quella voluta:",a:["Risponde come se avesse commesso il reato in danno della persona che voleva offendere","Risponde solo a titolo di colpa","Non è punibile","Risponde di due reati in concorso formale"],e:"Art. 82 c.p. Se oltre alla persona diversa è offesa anche quella designata, la pena è aumentata fino alla metà (aberratio plurilesiva)."},
+/* ================= PROCEDURA CIVILE ================= */
+{m:"pcv",q:"Dopo la riforma Cartabia, le memorie integrative nel rito ordinario di cognizione (art. 171-ter c.p.c.):",a:["Si depositano prima della prima udienza di comparizione, con termini a ritroso (40, 20 e 10 giorni)","Si depositano dopo la prima udienza, come nel vecchio art. 183, co. 6","Sono state abolite","Possono essere depositate in qualsiasi momento fino alla precisazione delle conclusioni"],e:"È una delle novità centrali del d.lgs. 149/2022: le tre memorie precedono l'udienza ex art. 183 c.p.c., così che le parti vi arrivino con il thema decidendum e probandum già definito."},
+{m:"pcv",q:"Il procedimento semplificato di cognizione (artt. 281-decies ss. c.p.c.):",a:["Ha sostituito il rito sommario ex art. 702-bis ed è obbligatorio quando i fatti non sono controversi, l'istruttoria è documentale o la causa è di pronta soluzione","È un procedimento cautelare","Si applica solo davanti al giudice di pace","Si conclude sempre con ordinanza non impugnabile"],e:"Introdotto dalla riforma Cartabia: si propone con ricorso; nei casi indicati dall'art. 281-decies, co. 1, il suo impiego è doveroso. Si chiude con sentenza."},
+{m:"pcv",q:"Le ordinanze provvisorie di accoglimento e di rigetto della domanda (artt. 183-ter e 183-quater c.p.c.) sono:",a:["Reclamabili e inidonee ad acquistare efficacia di giudicato","Sentenze a tutti gli effetti","Appellabili entro trenta giorni","Definitive e non impugnabili"],e:"Novità Cartabia: provvedimenti provvisori resi in corso di causa (condanna a somme o consegna/rilascio); sono reclamabili e non producono effetti di giudicato ex art. 2909 c.c."},
+{m:"pcv",q:"I termini per proporre appello sono:",a:["Trenta giorni dalla notificazione della sentenza o, in mancanza, sei mesi dalla sua pubblicazione","Sessanta giorni in ogni caso","Quindici giorni dalla comunicazione","Un anno dalla pubblicazione"],e:"Artt. 325 e 327 c.p.c.: termine breve di 30 giorni (60 per la cassazione) e termine lungo semestrale dalla pubblicazione, salva la contumacia involontaria."},
+{m:"pcv",q:"Il ricorso per cassazione è ammesso:",a:["Solo per i motivi tassativi dell'art. 360 c.p.c., tra cui violazione o falsa applicazione di norme di diritto e omesso esame di un fatto decisivo","Per qualsiasi errore di valutazione delle prove","Per motivi di merito, se il valore supera 100.000 euro","Solo per motivi di giurisdizione"],e:"La Cassazione è giudice di legittimità: i motivi sono giurisdizione, competenza, violazione di legge, nullità della sentenza o del procedimento, omesso esame di un fatto decisivo discusso tra le parti (n. 5)."},
+{m:"pcv",q:"Se una causa deve svolgersi tra più parti (litisconsorzio necessario) e alcune non sono state citate:",a:["Il giudice ordina l'integrazione del contraddittorio in un termine perentorio, pena l'estinzione del processo","Il processo prosegue solo tra le parti presenti","La domanda è inammissibile senza rimedio","Il giudice chiama d'ufficio i terzi a spese dello Stato"],e:"Art. 102 c.p.c. La sentenza resa a contraddittorio non integro è inutiliter data."},
+{m:"pcv",q:"La cosa giudicata formale e quella sostanziale indicano rispettivamente:",a:["La non impugnabilità della sentenza con mezzi ordinari (art. 324 c.p.c.) e l'accertamento che fa stato a ogni effetto tra le parti, eredi e aventi causa (art. 2909 c.c.)","Due sinonimi della stessa nozione","L'efficacia esecutiva e quella dichiarativa","Il giudicato interno e quello esterno"],e:"Il giudicato sostanziale presuppone quello formale e copre il dedotto e il deducibile."},
+{m:"pcv",q:"Secondo l'art. 2697 c.c., l'onere della prova grava:",a:["Su chi vuol far valere un diritto, per i fatti costitutivi; su chi eccepisce, per i fatti impeditivi, modificativi o estintivi","Sempre sul convenuto","Sempre su chi nega","Sul giudice, in virtù dei poteri officiosi"],e:"Regola di giudizio fondamentale: in caso di fatto rimasto incerto, soccombe la parte onerata della relativa prova."},
+{m:"pcv",q:"La cd. strumentalità attenuata dei provvedimenti cautelari anticipatori significa che:",a:["Il provvedimento (es. ex art. 700 c.p.c.) conserva efficacia anche se il giudizio di merito non viene iniziato","Il cautelare perde sempre efficacia dopo 60 giorni","Serve una cauzione obbligatoria","Il reclamo è escluso"],e:"Art. 669-octies, co. 6, c.p.c.: per i provvedimenti anticipatori (e la denuncia di nuova opera/danno temuto) l'instaurazione del merito è facoltativa; resta ferma per i cautelari conservativi (es. sequestri)."},
+{m:"pcv",q:"L'opposizione a decreto ingiuntivo:",a:["Si propone, di regola, entro 40 giorni dalla notifica e dà luogo a un ordinario giudizio di cognizione in cui l'opponente è attore solo in senso formale","Si propone entro 10 giorni al giudice dell'esecuzione","È un mezzo di impugnazione straordinario","Sospende sempre automaticamente l'esecutorietà del decreto"],e:"Artt. 641 e 645 c.p.c.: l'opposto resta attore in senso sostanziale, con il relativo onere della prova del credito."},
+{m:"pcv",q:"Il precetto diventa inefficace se, entro quale termine dalla notificazione, non è iniziata l'esecuzione?",a:["Novanta giorni","Trenta giorni","Sei mesi","Un anno"],e:"Art. 481 c.p.c. Il termine è sospeso se è proposta opposizione al precetto."},
+{m:"pcv",q:"Nelle materie in cui la mediazione è condizione di procedibilità della domanda, l'improcedibilità:",a:["Deve essere eccepita dal convenuto o rilevata d'ufficio non oltre la prima udienza","Può essere rilevata in ogni stato e grado","È rilevabile solo in appello","Comporta il rigetto nel merito della domanda"],e:"Art. 5 d.lgs. 28/2010, come modificato dalla riforma Cartabia, che ha anche ampliato l'elenco delle materie (tra le nuove: franchising, opera, rete, somministrazione, consorzio, subfornitura, società di persone)."},
+{m:"pcv",q:"La negoziazione assistita dagli avvocati è condizione di procedibilità, tra l'altro, per:",a:["Il risarcimento del danno da circolazione di veicoli e natanti e le domande di pagamento fino a 50.000 euro","Tutte le cause civili senza eccezioni","Le sole cause di lavoro","Le controversie condominiali"],e:"Art. 3 d.l. 132/2014. Restano escluse, tra l'altro, le materie già soggette a mediazione obbligatoria."},
+{m:"pcv",q:"Il principio di corrispondenza tra il chiesto e il pronunciato (art. 112 c.p.c.) impone al giudice di:",a:["Pronunciare su tutta la domanda e non oltre i suoi limiti, senza rilevare d'ufficio eccezioni riservate alle parti","Decidere secondo equità in ogni caso","Integrare d'ufficio le domande carenti","Pronunciarsi anche su domande nuove in appello"],e:"Il vizio di ultra o extrapetizione rende la sentenza nulla, censurabile ex art. 360, n. 4, c.p.c."},
+{m:"pcv",q:"Nel processo civile, la contumacia del convenuto:",a:["Non equivale ad ammissione dei fatti allegati dall'attore, che restano bisognosi di prova","Vale come confessione dei fatti (ficta confessio)","Determina l'automatico accoglimento della domanda","Impedisce la prosecuzione del giudizio"],e:"A differenza di altri ordinamenti, nel sistema italiano la contumacia è un comportamento neutro; il principio di non contestazione ex art. 115 c.p.c. opera solo per la parte costituita."},
+{m:"pcv",q:"Il principio di non contestazione (art. 115 c.p.c.) comporta che:",a:["I fatti non specificamente contestati dalla parte costituita sono posti a fondamento della decisione senza bisogno di prova","Tutti i fatti vanno comunque provati","Vale anche nei confronti del contumace","Riguarda solo i documenti"],e:"Onere di contestazione specifica e tempestiva: la contestazione generica è inidonea a rendere il fatto controverso."},
+{m:"pcv",q:"Non possono testimoniare nel processo civile:",a:["Le persone che hanno nella causa un interesse che potrebbe legittimarne la partecipazione al giudizio","I parenti delle parti entro il quarto grado","I minori di 18 anni","I dipendenti delle parti"],e:"Art. 246 c.p.c.: incapacità a testimoniare per interesse giuridico (non di mero fatto) alla causa."},
+{m:"pcv",q:"Il rinvio pregiudiziale alla Corte di cassazione (art. 363-bis c.p.c.) può essere disposto dal giudice di merito quando la questione:",a:["È esclusivamente di diritto, nuova, di grave difficoltà interpretativa e suscettibile di porsi in numerose controversie","Riguarda la ricostruzione dei fatti","È già stata decisa dalle Sezioni Unite","Attiene solo alla competenza territoriale"],e:"Novità Cartabia: il processo è sospeso e il principio di diritto enunciato dalla Cassazione è vincolante nel procedimento in cui è stato disposto il rinvio."},
+{m:"pcv",q:"Sono titoli esecutivi, tra gli altri:",a:["Le sentenze e i provvedimenti a cui la legge attribuisce efficacia esecutiva, le scritture private autenticate (per le somme di denaro), le cambiali e gli atti notarili","Solo le sentenze passate in giudicato","Le semplici fatture commerciali","Le diffide stragiudiziali dell'avvocato"],e:"Art. 474 c.p.c. Il titolo esecutivo deve incorporare un diritto certo, liquido ed esigibile."},
+
+/* ================= PROCEDURA PENALE ================= */
+{m:"ppn",q:"La custodia cautelare in carcere può essere disposta solo per:",a:["Delitti puniti con reclusione non inferiore nel massimo a cinque anni (oltre a ipotesi specifiche), quale extrema ratio","Qualsiasi reato punito con pena detentiva","Delitti puniti con pena superiore nel massimo a tre anni, come ogni altra misura","Soli delitti di criminalità organizzata"],e:"Art. 280, co. 2, c.p.p. Le misure cautelari personali in genere richiedono pena superiore nel massimo a 3 anni; per la custodia in carcere la soglia è più alta e vale il principio del minor sacrificio (art. 275 c.p.p.)."},
+{m:"ppn",q:"Le condizioni generali di applicabilità delle misure cautelari personali sono:",a:["Gravi indizi di colpevolezza e almeno una esigenza cautelare (pericolo per la prova, di fuga o di reiterazione)","Il solo fumus del reato","La flagranza di reato","La richiesta della persona offesa"],e:"Artt. 273 e 274 c.p.p. Le esigenze devono essere attuali e concrete; la scelta della misura segue proporzionalità e adeguatezza (art. 275 c.p.p.)."},
+{m:"ppn",q:"La richiesta di riesame contro l'ordinanza di custodia cautelare va presentata entro:",a:["Dieci giorni dall'esecuzione o notificazione del provvedimento","Trenta giorni","Cinque giorni","Quarantotto ore"],e:"Art. 309 c.p.p. Il tribunale della libertà deve poi decidere entro dieci giorni dalla ricezione degli atti, a pena di inefficacia della misura."},
+{m:"ppn",q:"Dopo la riforma Cartabia, i termini di durata delle indagini preliminari sono, di regola:",a:["Sei mesi per le contravvenzioni, un anno per i delitti, un anno e sei mesi per i reati più gravi ex art. 407, co. 2","Sei mesi per tutti i reati","Due anni per tutti i delitti","Illimitati fino all'esercizio dell'azione penale"],e:"Art. 405 c.p.p. (d.lgs. 150/2022). La proroga è ammessa una sola volta, per un tempo non superiore a sei mesi (art. 406 c.p.p.)."},
+{m:"ppn",q:"Con la riforma Cartabia, il PM chiede l'archiviazione quando gli elementi acquisiti:",a:["Non consentono una ragionevole previsione di condanna o di applicazione di una misura di sicurezza","Non rendono manifestamente infondata la notizia di reato","Non consentono di sostenere l'accusa in giudizio","Rendono il fatto di lieve entità"],e:"Art. 408 c.p.p.: la nuova regola di giudizio (ragionevole previsione di condanna) mira a rafforzare il filtro; identico criterio per la sentenza di non luogo a procedere (art. 425, co. 3, c.p.p.)."},
+{m:"ppn",q:"All'esito dell'udienza preliminare, il giudice pronuncia sentenza di non luogo a procedere quando:",a:["Gli elementi acquisiti non consentono una ragionevole previsione di condanna, oltre che nei casi di proscioglimento nel merito o in rito","Vi è anche solo un dubbio sulla colpevolezza","L'imputato lo richiede","Le prove sono contraddittorie ma astrattamente idonee"],e:"Art. 425 c.p.p., come modificato dal d.lgs. 150/2022, allineato alla regola dell'art. 408 c.p.p."},
+{m:"ppn",q:"L'applicazione della pena su richiesta delle parti (patteggiamento) è ammessa quando la pena detentiva, tenuto conto della riduzione fino a un terzo:",a:["Non supera cinque anni, sola o congiunta a pena pecuniaria","Non supera due anni in ogni caso","Non supera dieci anni","È solo pecuniaria"],e:"Art. 444 c.p.p. Nel cd. patteggiamento allargato (pena tra 2 e 5 anni) restano esclusi taluni reati e categorie di imputati; sopra i 2 anni non opera la sospensione condizionale automatica."},
+{m:"ppn",q:"Nel giudizio abbreviato, in caso di condanna la pena è ridotta:",a:["Di un terzo per i delitti e della metà per le contravvenzioni","Della metà per i delitti","Di un quarto in ogni caso","Fino a due terzi, a discrezione del giudice"],e:"Art. 442 c.p.p. Il rito è escluso per i delitti puniti con l'ergastolo (art. 438, co. 1-bis). Cartabia ha aggiunto un'ulteriore riduzione di 1/6 se il condannato rinuncia ad appellare."},
+{m:"ppn",q:"L'opposizione al decreto penale di condanna va proposta entro:",a:["Quindici giorni dalla notificazione, potendo l'opponente chiedere anche i riti alternativi","Cinque giorni","Trenta giorni","Sessanta giorni"],e:"Artt. 459 ss. e 461 c.p.p. In mancanza di opposizione il decreto diviene esecutivo."},
+{m:"ppn",q:"L'improcedibilità per superamento dei termini di durata massima del giudizio di impugnazione (art. 344-bis c.p.p.) prevede, di regola:",a:["Due anni per l'appello e un anno per il giudizio di cassazione, con possibilità di proroga per i procedimenti complessi","Tre anni per ogni grado","Sei mesi per l'appello","Termini validi anche per i reati puniti con l'ergastolo"],e:"Introdotta dalla L. 134/2021, si applica ai reati commessi dal 1° gennaio 2020; sono esclusi i reati imprescrittibili (puniti con l'ergastolo)."},
+{m:"ppn",q:"La testimonianza indiretta (art. 195 c.p.p.) è utilizzabile solo se:",a:["Il testimone indica la fonte da cui ha appreso la notizia; se richiesto, il giudice dispone la citazione della fonte","La fonte è deceduta","Il PM vi acconsente","Riguarda fatti anteriori al reato"],e:"L'inosservanza rende la testimonianza de relato inutilizzabile. Regole particolari valgono per le dichiarazioni apprese dall'imputato."},
+{m:"ppn",q:"Le dichiarazioni rese dal coimputato o da imputato in procedimento connesso (chiamata di correo):",a:["Sono valutate unitamente agli altri elementi di prova che ne confermano l'attendibilità (riscontri esterni individualizzanti)","Hanno valore di piena prova","Sono sempre inutilizzabili","Valgono solo se rese al PM"],e:"Art. 192, co. 3, c.p.p.: regola di valutazione legale della prova, che richiede riscontri estrinseci e individualizzanti."},
+{m:"ppn",q:"Presupposto per l'autorizzazione delle intercettazioni è la sussistenza di:",a:["Gravi indizi di reato (non di colpevolezza) e l'assoluta indispensabilità per la prosecuzione delle indagini","Gravi indizi di colpevolezza a carico di un indagato individuato","Una condanna di primo grado","Un pericolo di fuga"],e:"Artt. 266 e 267 c.p.p.: il presupposto è oggettivo, riferito al reato, oltre ai limiti di ammissibilità per categorie di reati."},
+{m:"ppn",q:"Dopo la riforma Cartabia, si procede in assenza dell'imputato solo se:",a:["Vi è la prova dell'effettiva conoscenza della pendenza del processo e la mancata comparizione è volontaria","L'imputato è stato semplicemente irreperibile","La notifica è avvenuta al difensore d'ufficio","Lo chiede la parte civile"],e:"Art. 420-bis c.p.p. riscritto dal d.lgs. 150/2022; se manca tale prova, il giudice pronuncia sentenza inappellabile di non doversi procedere ex art. 420-quater, revocabile al rintraccio dell'imputato."},
+{m:"ppn",q:"L'avviso di conclusione delle indagini preliminari (art. 415-bis c.p.p.) consente all'indagato, entro venti giorni:",a:["Di presentare memorie, produrre documenti, chiedere il compimento di atti di indagine e di essere interrogato","Solo di nominare un difensore","Di proporre riesame","Di chiedere il patteggiamento al GIP"],e:"Se l'indagato chiede l'interrogatorio, il PM deve procedervi a pena di nullità della successiva richiesta di rinvio a giudizio."},
+{m:"ppn",q:"Sono nullità assolute, insanabili e rilevabili d'ufficio in ogni stato e grado:",a:["Quelle derivanti, tra l'altro, dall'omessa citazione dell'imputato o dall'assenza del difensore nei casi in cui ne è obbligatoria la presenza","Tutte le nullità concernenti le notificazioni","Le sole nullità eccepite dal PM","Le irregolarità formali degli atti"],e:"Art. 179 c.p.p. Le altre nullità di ordine generale sono a regime intermedio (art. 180); le relative vanno eccepite nei termini (art. 181)."},
+{m:"ppn",q:"L'incidente probatorio serve a:",a:["Assumere anticipatamente, nel contraddittorio, prove non rinviabili al dibattimento (es. testimoni vulnerabili o prove a rischio di dispersione)","Impugnare le ordinanze del GIP","Sospendere le indagini","Ottenere la revoca delle misure cautelari"],e:"Artt. 392 ss. c.p.p. La prova così assunta è utilizzabile in dibattimento."},
+{m:"ppn",q:"Costituisce remissione tacita della querela, dopo la riforma Cartabia:",a:["La mancata comparizione senza giustificato motivo del querelante all'udienza alla quale è stato citato come testimone","Il semplice silenzio del querelante","La nomina di un nuovo difensore","Il decorso di sei mesi dalla querela"],e:"Art. 152 c.p. come modificato dal d.lgs. 150/2022. La remissione, accettata, estingue il reato."},
+{m:"ppn",q:"Il giudice d'appello che intenda riformare in peius un'assoluzione fondata su prove dichiarative decisive deve, di regola:",a:["Rinnovare l'istruzione dibattimentale riascoltando i dichiaranti","Limitarsi a rivalutare i verbali","Rimettere gli atti al primo giudice","Chiedere il parere della Procura generale"],e:"Art. 603, co. 3-bis, c.p.p.; principio affermato da Cass. SU \"Dasgupta\" (n. 27620/2016) in attuazione del canone del ragionevole dubbio e della giurisprudenza CEDU."},
+{m:"ppn",q:"Nel rito monocratico a citazione diretta, l'udienza di comparizione predibattimentale (art. 554-bis c.p.p.):",a:["Funge da filtro: il giudice pronuncia sentenza di non luogo a procedere se gli elementi non consentono una ragionevole previsione di condanna","È una semplice udienza di smistamento senza poteri decisori","Sostituisce il dibattimento","Si svolge davanti al GIP"],e:"Introdotta dalla riforma Cartabia; davanti a un giudice diverso da quello del dibattimento l'imputato può anche chiedere i riti alternativi."},
+
+/* ================= DIRITTO AMMINISTRATIVO ================= */
+{m:"amm",q:"L'obbligo di motivazione del provvedimento amministrativo (art. 3 L. 241/1990):",a:["Riguarda ogni provvedimento, esclusi gli atti normativi e quelli a contenuto generale","Riguarda solo i provvedimenti sfavorevoli","È stato abrogato per gli atti vincolati","Vale solo per i provvedimenti sanzionatori"],e:"La motivazione deve indicare presupposti di fatto e ragioni giuridiche della decisione, in relazione alle risultanze dell'istruttoria."},
+{m:"amm",q:"In mancanza di diversa previsione, il termine generale di conclusione del procedimento amministrativo è di:",a:["Trenta giorni","Sessanta giorni","Novanta giorni","Centottanta giorni"],e:"Art. 2 L. 241/1990. Le amministrazioni possono fissare termini diversi, di regola non superiori a 90 giorni (fino a 180 in casi particolari)."},
+{m:"amm",q:"Nei procedimenti a istanza di parte, il silenzio della PA oltre il termine equivale, di regola, a:",a:["Provvedimento di accoglimento (silenzio-assenso), salve le materie escluse come patrimonio culturale, ambiente, salute e sicurezza pubblica","Sempre a rigetto dell'istanza","A un mero fatto senza alcun valore","A sospensione del procedimento"],e:"Art. 20 L. 241/1990. Nelle materie escluse e nei casi di silenzio-inadempimento resta l'azione avverso il silenzio ex artt. 31 e 117 c.p.a."},
+{m:"amm",q:"L'azione avverso il silenzio-inadempimento della PA può essere proposta:",a:["Finché perdura l'inadempimento e comunque non oltre un anno dalla scadenza del termine di conclusione del procedimento","Entro sessanta giorni dalla scadenza del termine","Senza alcun limite temporale","Solo dopo una diffida notificata da almeno novanta giorni"],e:"Art. 31 c.p.a. È fatta salva la riproponibilità dell'istanza di avvio del procedimento, ove ne ricorrano i presupposti."},
+{m:"amm",q:"Con la SCIA (art. 19 L. 241/1990), l'attività segnalata:",a:["Può essere iniziata dalla data di presentazione della segnalazione; la PA ha 60 giorni (30 in edilizia) per i controlli inibitori","Può iniziare solo dopo 30 giorni di silenzio","Richiede comunque un provvedimento espresso","È subordinata a collaudo pubblico"],e:"La SCIA non è un provvedimento tacito ma un atto del privato: liberalizzazione con controllo successivo. Scaduti i termini, la PA può intervenire solo alle condizioni dell'art. 21-nonies."},
+{m:"amm",q:"Il terzo che si ritiene leso da un'attività avviata con SCIA:",a:["Può solo sollecitare le verifiche spettanti alla PA e, in caso di inerzia, agire con l'azione avverso il silenzio ex art. 31 c.p.a.","Può impugnare direttamente la SCIA entro 60 giorni","Può chiedere al giudice ordinario l'annullamento della SCIA","Non ha alcuna tutela"],e:"Art. 19, co. 6-ter, L. 241/1990: la SCIA non è un provvedimento impugnabile; la tutela del terzo passa per la sollecitazione dei poteri di verifica."},
+{m:"amm",q:"L'annullamento d'ufficio del provvedimento illegittimo (art. 21-nonies L. 241/1990) richiede:",a:["Ragioni di interesse pubblico attuale, un termine ragionevole (non oltre 12 mesi per autorizzazioni e attribuzioni di vantaggi economici) e la ponderazione degli interessi dei destinatari","La sola illegittimità originaria dell'atto","Il consenso del destinatario","Una sentenza del giudice amministrativo"],e:"Il termine massimo, originariamente di 18 mesi, è stato ridotto a 12 dal d.l. 77/2021. Non basta il ripristino della legalità: serve un interesse pubblico concreto ulteriore."},
+{m:"amm",q:"La revoca del provvedimento (art. 21-quinquies L. 241/1990):",a:["Opera per sopravvenuti motivi di interesse pubblico, mutamento della situazione di fatto o nuova valutazione dell'interesse originario, con effetti ex nunc e obbligo di indennizzo per i pregiudizi","Opera solo per vizi di legittimità, con effetti retroattivi","È ammessa solo entro 60 giorni dall'adozione dell'atto","Non è mai possibile per i provvedimenti favorevoli"],e:"La revoca è rimedio di merito (inopportunità sopravvenuta), a differenza dell'annullamento d'ufficio che rimuove l'atto illegittimo con effetti ex tunc."},
+{m:"amm",q:"Il provvedimento amministrativo è nullo (art. 21-septies L. 241/1990) quando:",a:["Manca degli elementi essenziali, è viziato da difetto assoluto di attribuzione o è stato adottato in violazione o elusione del giudicato, oltre agli altri casi previsti dalla legge","È viziato da eccesso di potere","È privo di motivazione","È adottato da organo incompetente per territorio"],e:"Ipotesi tassative; per la nullità da violazione o elusione del giudicato la giurisdizione è del GA in sede di ottemperanza (art. 133 c.p.a.)."},
+{m:"amm",q:"Ai sensi dell'art. 21-octies, co. 2, L. 241/1990, il provvedimento non è annullabile:",a:["Per vizi formali o procedimentali, quando per la sua natura vincolata è palese che il contenuto non avrebbe potuto essere diverso","Quando il vizio è di incompetenza","Quando lo chiede l'amministrazione resistente","Per violazione di legge sostanziale"],e:"Cd. vizi non invalidanti. Per la mancata comunicazione di avvio del procedimento, la PA può dimostrare in giudizio che l'esito non poteva essere diverso."},
+{m:"amm",q:"I termini per agire davanti al TAR sono, di regola:",a:["Sessanta giorni per l'azione di annullamento e centoventi giorni per l'azione risarcitoria autonoma","Trenta giorni per entrambe le azioni","Un anno per l'annullamento","Novanta giorni per l'annullamento e sei mesi per il risarcimento"],e:"Artt. 29 e 30, co. 3, c.p.a. Il risarcimento può essere chiesto anche in via autonoma, senza previa impugnazione (superamento della pregiudiziale amministrativa)."},
+{m:"amm",q:"Il ricorso straordinario al Presidente della Repubblica:",a:["Si propone entro 120 giorni ed è alternativo al ricorso giurisdizionale (electa una via, non datur recursus ad alteram)","Si propone entro 60 giorni ed è cumulabile con il ricorso al TAR","È deciso direttamente dal Presidente della Repubblica senza pareri","È ammesso solo contro i regolamenti"],e:"Rimedio giustiziale su parere vincolante del Consiglio di Stato; ammesso solo per controversie devolute alla giurisdizione amministrativa."},
+{m:"amm",q:"L'accesso civico generalizzato (FOIA) si distingue dall'accesso documentale perché:",a:["Spetta a chiunque, senza necessità di un interesse diretto, concreto e attuale, nei limiti dei controinteressi pubblici e privati","Richiede un interesse qualificato più intenso","Riguarda solo i documenti già pubblicati","È riservato ai giornalisti"],e:"Art. 5, co. 2, d.lgs. 33/2013 vs art. 22 L. 241/1990. L'accesso documentale richiede invece una situazione legittimante collegata al documento."},
+{m:"amm",q:"Decorsi trenta giorni dall'istanza di accesso documentale senza risposta:",a:["L'istanza si intende respinta (silenzio-rigetto), impugnabile davanti al TAR entro trenta giorni con rito speciale","Si forma il silenzio-assenso","L'istanza si intende accolta dopo ulteriore diffida","Il termine si proroga automaticamente di sessanta giorni"],e:"Art. 25, co. 4, L. 241/1990 e art. 116 c.p.a. (rito abbreviato in camera di consiglio)."},
+{m:"amm",q:"L'eccesso di potere è:",a:["Il vizio della funzione, tipico dei provvedimenti discrezionali, riconoscibile attraverso figure sintomatiche come sviamento, travisamento dei fatti, disparità di trattamento, contraddittorietà","Un vizio di merito non sindacabile","La violazione di norme di legge puntuali","Un vizio che rende nullo il provvedimento"],e:"È una delle tre cause di annullabilità ex art. 21-octies, co. 1 (incompetenza, eccesso di potere, violazione di legge)."},
+{m:"amm",q:"La storica sentenza Cass. SU n. 500/1999 ha affermato che:",a:["Anche la lesione dell'interesse legittimo può dare luogo a risarcimento del danno ingiusto ex art. 2043 c.c.","Gli interessi legittimi non sono mai risarcibili","Il risarcimento spetta solo previa condanna penale del funzionario","Il giudice ordinario può annullare i provvedimenti amministrativi"],e:"Svolta sulla risarcibilità degli interessi legittimi; oggi la cognizione del risarcimento per lesione di interessi legittimi spetta al GA (art. 7 e 30 c.p.a.)."},
+{m:"amm",q:"Il giudizio di ottemperanza serve a:",a:["Ottenere l'attuazione del giudicato (e di altri provvedimenti equiparati) rimasto ineseguito dalla PA, anche tramite nomina di un commissario ad acta","Impugnare i regolamenti governativi","Sospendere l'esecuzione delle sentenze","Ottenere l'accesso ai documenti"],e:"Artt. 112 ss. c.p.a.: giurisdizione estesa al merito, con potere del giudice di sostituirsi all'amministrazione inadempiente."},
+{m:"amm",q:"Nelle materie di giurisdizione esclusiva (art. 133 c.p.a.), il giudice amministrativo conosce:",a:["Anche delle controversie su diritti soggettivi, in materie tassativamente indicate dalla legge","Solo di interessi legittimi","Di qualsiasi controversia con la PA, senza limiti","Delle sole questioni risarcitorie"],e:"Deroga al riparto fondato sulla causa petendi (diritti al GO, interessi legittimi al GA, art. 103 Cost.), ammessa dalla Costituzione per particolari materie."},
+
+/* ========== ORDINAMENTO E DEONTOLOGIA FORENSE ========== */
+{m:"deo",q:"Il patto di quota lite è:",a:["Vietato: l'avvocato non può pattuire come compenso una quota del bene oggetto della prestazione o della ragione litigiosa; è invece ammesso il compenso a percentuale sul valore dell'affare","Sempre consentito, per la libertà contrattuale","Consentito solo nelle cause di lavoro","Consentito se autorizzato dal Consiglio dell'Ordine"],e:"Art. 13, co. 3 e 4, L. 247/2012 e art. 25 cod. deont.: la violazione integra illecito disciplinare."},
+{m:"deo",q:"Quanto al compenso, l'avvocato è tenuto a:",a:["Comunicare al cliente, in forma scritta o digitale, la prevedibile misura del costo della prestazione (preventivo obbligatorio)","Fornire il preventivo solo se richiesto dal cliente","Applicare sempre i parametri ministeriali, che sono inderogabili","Chiedere il pagamento anticipato integrale"],e:"Art. 13, co. 5, L. 247/2012, come modificato dalla L. 124/2017. La pattuizione del compenso è libera; i parametri del DM operano in mancanza di accordo."},
+{m:"deo",q:"Il dovere di segreto professionale:",a:["Permane anche dopo la cessazione del mandato e si estende all'obbligo di farlo osservare a collaboratori, praticanti e dipendenti","Cessa con la conclusione dell'incarico","Riguarda solo le informazioni apprese in giudizio","Può essere sempre derogato per difendersi da critiche del cliente"],e:"Art. 6 L. 247/2012 e artt. 13 e 28 cod. deont. Sono previste deroghe tassative (es. necessità di difesa dell'avvocato in controversia col cliente), nei limiti dello stretto necessario."},
+{m:"deo",q:"L'avvocato chiamato a testimoniare su circostanze apprese nell'esercizio dell'attività professionale:",a:["Deve astenersi, salvo i casi previsti dalla legge; se decide di deporre, deve rinunciare al mandato e non può riassumerlo","È sempre obbligato a deporre come qualsiasi testimone","Può deporre mantenendo il mandato","Deve chiedere l'autorizzazione al giudice"],e:"Art. 51 cod. deont.; sul piano processuale l'art. 200 c.p.p. riconosce il segreto professionale."},
+{m:"deo",q:"In caso di conflitto di interessi, l'avvocato:",a:["Deve astenersi dal prestare attività professionale anche quando il conflitto è solo potenziale, e il dovere si estende ai casi in cui la controparte sia assistita da colleghi dello stesso studio","Può accettare l'incarico se informa entrambe le parti","Deve astenersi solo se il conflitto è attuale e certo","Può proseguire se il compenso è già stato pattuito"],e:"Art. 24 cod. deont.: tutela dell'indipendenza e del dovere di fedeltà; rileva anche il conflitto con interessi propri dell'avvocato."},
+{m:"deo",q:"L'avvocato può mettersi in contatto diretto con la controparte?",a:["No, se sa che è assistita da altro legale: deve rivolgersi al collega, salvo casi particolari (es. richiesta di comportamenti urgenti, con lettera in copia al collega)","Sì, sempre, se in buona fede","Sì, purché lo comunichi al proprio cliente","No, salvo autorizzazione del giudice"],e:"Art. 41 cod. deont.: presidio della dialettica tra difese e della correttezza tra colleghi."},
+{m:"deo",q:"La corrispondenza tra avvocati espressamente qualificata come riservata:",a:["Non può essere prodotta in giudizio né riferita; le proposte transattive scambiate tra colleghi non sono comunque producibili","Può essere prodotta se utile al cliente","Può essere prodotta con il consenso del proprio assistito","Diventa producibile dopo un anno"],e:"Art. 48 cod. deont. Fanno eccezione, tra l'altro, la corrispondenza che costituisce adempimento e quella che assicura la prova di un accordo perfezionato."},
+{m:"deo",q:"In tema di pubblicità informativa, all'avvocato è consentito:",a:["Dare informazioni sull'attività professionale con ogni mezzo, purché veritiere, trasparenti, non equivoche, non ingannevoli, non denigratorie, non suggestive né comparative","Solo la targa dello studio e la carta intestata","Qualsiasi messaggio promozionale, anche comparativo","La pubblicità solo su riviste giuridiche"],e:"Art. 10 L. 247/2012 e art. 35 cod. deont. È vietato, tra l'altro, l'accaparramento di clientela (art. 37 cod. deont.)."},
+{m:"deo",q:"Le sanzioni disciplinari previste dal codice deontologico sono:",a:["Avvertimento, censura, sospensione dall'esercizio da due mesi a cinque anni e radiazione dall'albo","Solo la censura e la radiazione","Ammenda pecuniaria e sospensione","Richiamo verbale e multa"],e:"Art. 22 cod. deont. Nei casi di infrazioni lievi e scusabili è possibile il richiamo verbale, che non ha carattere di sanzione disciplinare."},
+{m:"deo",q:"La titolarità dell'azione disciplinare nei confronti degli avvocati spetta:",a:["Ai Consigli distrettuali di disciplina (CDD); le decisioni sono impugnabili davanti al CNF e, poi, alle Sezioni Unite della Cassazione","Al Consiglio dell'Ordine di appartenenza, che giudica i propri iscritti","Al Ministero della Giustizia","Al Procuratore della Repubblica"],e:"Artt. 50 ss. L. 247/2012: la riforma ha separato la funzione disciplinare da quella amministrativa dei COA, che conservano compiti di segnalazione."},
+{m:"deo",q:"L'azione disciplinare si prescrive:",a:["In sei anni dal fatto","In un anno dal fatto","In dieci anni dal fatto","Mai, essendo imprescrittibile"],e:"Art. 56 L. 247/2012, che disciplina anche gli effetti degli atti interruttivi (con un termine massimo complessivo di sette anni e mezzo)."},
+{m:"deo",q:"Il procedimento disciplinare rispetto al processo penale sullo stesso fatto:",a:["Si svolge ed è definito con procedura e valutazioni autonome","È sempre sospeso fino al giudicato penale","È precluso dall'assoluzione penale","Deve concludersi con la stessa decisione del giudice penale"],e:"Art. 54 L. 247/2012: principio di autonomia; il CDD può comunque valutare gli atti del procedimento penale."},
+{m:"deo",q:"La professione di avvocato è incompatibile, tra l'altro, con:",a:["Qualsiasi attività di lavoro subordinato e con l'esercizio di attività di impresa commerciale in nome proprio; è invece compatibile con l'insegnamento e la ricerca in materie giuridiche","L'insegnamento universitario del diritto","Ogni carica in associazioni senza scopo di lucro","La professione di pubblicista"],e:"Artt. 18 e 19 L. 247/2012. Eccezioni specifiche valgono, ad esempio, per gli avvocati degli enti pubblici iscritti nell'elenco speciale."},
+{m:"deo",q:"L'obbligo di formazione continua dell'avvocato:",a:["È un dovere permanente di curare l'aggiornamento professionale, previsto dalla legge e dal codice deontologico, con crediti formativi periodici","Riguarda solo i primi cinque anni di iscrizione","È una semplice raccomandazione priva di sanzioni","Vale solo per i cassazionisti"],e:"Art. 11 L. 247/2012 e art. 15 cod. deont.; la violazione costituisce illecito disciplinare. Sono previsti esoneri (es. per anzianità o maternità) secondo il regolamento CNF."},
+{m:"deo",q:"L'assicurazione per la responsabilità civile professionale dell'avvocato è:",a:["Obbligatoria per legge; gli estremi della polizza vanno resi noti al cliente che ne faccia richiesta","Facoltativa","Obbligatoria solo per chi esercita davanti alle giurisdizioni superiori","A carico del Consiglio dell'Ordine"],e:"Art. 12 L. 247/2012. La mancata stipula costituisce illecito disciplinare."},
+{m:"deo",q:"Il tirocinio professionale per l'accesso alla professione forense ha una durata di:",a:["Diciotto mesi","Ventiquattro mesi","Dodici mesi","Trentasei mesi"],e:"Art. 41 L. 247/2012. Sono previste modalità alternative o parzialmente anticipate (es. ultimo semestre durante l'università, secondo la disciplina vigente)."},
+{m:"deo",q:"Quanto al dovere di verità (art. 50 cod. deont.), l'avvocato:",a:["Non deve introdurre nel procedimento prove che sappia essere false e non può utilizzare quelle di cui apprenda successivamente la falsità","Può utilizzare qualsiasi prova utile al cliente","Deve rivelare al giudice ogni fatto sfavorevole al proprio assistito","Risponde solo se la falsità è accertata con sentenza penale"],e:"Il dovere di difesa non copre l'inganno al giudice: la lealtà processuale è presidiata anche dagli artt. 9 e 19 cod. deont."},
+{m:"deo",q:"L'avvocato che intende rinunciare al mandato deve:",a:["Dare alla parte assistita un congruo preavviso e le informazioni necessarie, così da non pregiudicarne la difesa e consentirle di nominare un altro difensore","Semplicemente cessare l'attività, senza formalità","Ottenere l'autorizzazione del giudice in ogni caso","Attendere la fine del grado di giudizio"],e:"Art. 32 cod. deont. Sul piano processuale, revoca e rinuncia alla procura non hanno effetto finché non è avvenuta la sostituzione (art. 85 c.p.c.)."},
+{m:"deo",q:"Il difensore nominato d'ufficio nel processo penale:",a:["Ha l'obbligo di prestare il patrocinio salvo giustificato motivo, e ha diritto al compenso dall'assistito, salvo che questi sia ammesso al patrocinio a spese dello Stato","Presta la sua opera gratuitamente","Può rifiutare liberamente l'incarico","È pagato in ogni caso dallo Stato"],e:"Artt. 97 c.p.p. e 31 disp. att.; la difesa d'ufficio non coincide con il gratuito patrocinio, che dipende dai limiti di reddito."},
+{m:"deo",q:"Nell'attività professionale e nei rapporti con colleghi e controparti, l'avvocato deve evitare espressioni offensive o sconvenienti:",a:["Sì: il divieto vale negli scritti in giudizio e nell'attività professionale in genere, e la ritorsione o provocazione altrui non esclude la rilevanza disciplinare","No, se le espressioni sono funzionali alla difesa","Solo nelle udienze pubbliche","Solo verso i magistrati"],e:"Art. 52 cod. deont.; espressione dei doveri di dignità, decoro e correttezza (art. 9 cod. deont.)."},
+];
+
+/* ==================== LOGICA ==================== */
+const $ = id => document.getElementById(id);
+const screens = { start: $("screen-start"), quiz: $("screen-quiz"), result: $("screen-result") };
+
+const state = {
+  selected: new Set(Object.keys(SUBJECTS)),
+  n: 20,
+  quiz: [],       // domande estratte, con opzioni mescolate
+  i: 0,
+  answered: false,
+  results: []     // {q, given, correctText, ok}
+};
+
+function show(name){
+  Object.values(screens).forEach(s => s.classList.add("hidden"));
+  screens[name].classList.remove("hidden");
+  window.scrollTo({top:0});
+}
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* ---------- schermata iniziale ---------- */
+function buildStart(){
+  const cont = $("subs");
+  cont.innerHTML = "";
+  Object.entries(SUBJECTS).forEach(([key, s]) => {
+    const count = BANK.filter(q => q.m === key).length;
+    const label = document.createElement("label");
+    label.className = "sub" + (state.selected.has(key) ? "" : " off");
+    label.style.setProperty("--sub", s.color);
+    label.innerHTML =
+      '<input type="checkbox" ' + (state.selected.has(key) ? "checked" : "") + '>' +
+      '<span><span class="t">' + s.name + '</span>' +
+      '<span class="c">' + count + " domande in archivio</span></span>";
+    label.querySelector("input").addEventListener("change", e => {
+      if(e.target.checked){ state.selected.add(key); label.classList.remove("off"); }
+      else { state.selected.delete(key); label.classList.add("off"); }
+      updateHint();
+    });
+    cont.appendChild(label);
+  });
+
+  document.querySelectorAll(".nbtn").forEach(b => {
+    b.addEventListener("click", () => {
+      document.querySelectorAll(".nbtn").forEach(x => x.classList.remove("on"));
+      b.classList.add("on");
+      state.n = parseInt(b.dataset.n, 10);
+      updateHint();
+    });
+  });
+  updateHint();
+}
+
+function pool(){ return BANK.filter(q => state.selected.has(q.m)); }
+
+function updateHint(){
+  const p = pool().length;
+  const n = state.n === 0 ? p : Math.min(state.n, p);
+  $("bank-hint").textContent = p === 0
+    ? "Seleziona almeno una materia per iniziare."
+    : "Archivio disponibile: " + p + " domande · questo quiz ne pescherà " + n + " a caso.";
+  $("btn-start").disabled = p === 0;
+}
+
+/* ---------- quiz ---------- */
+function startQuiz(){
+  const p = shuffle(pool());
+  const n = state.n === 0 ? p.length : Math.min(state.n, p.length);
+  state.quiz = p.slice(0, n).map(q => {
+    const order = shuffle([0,1,2,3]);
+    return {
+      m: q.m, q: q.q, e: q.e,
+      opts: order.map(idx => q.a[idx]),
+      correct: order.indexOf(0)
+    };
+  });
+  state.i = 0;
+  state.results = [];
+  renderQuestion();
+  show("quiz");
+}
+
+function renderQuestion(){
+  const q = state.quiz[state.i];
+  const s = SUBJECTS[q.m];
+  state.answered = false;
+
+  $("counter").textContent = "DOMANDA " + String(state.i + 1).padStart(2,"0") + " / " + String(state.quiz.length).padStart(2,"0");
+  const chip = $("chip");
+  chip.textContent = s.short;
+  chip.style.setProperty("--sub", s.color);
+  const fill = $("bar-fill");
+  fill.style.setProperty("--sub", s.color);
+  fill.style.width = ((state.i) / state.quiz.length * 100) + "%";
+
+  $("qtext").textContent = q.q;
+
+  const box = $("opts");
+  box.innerHTML = "";
+  const letters = ["A","B","C","D"];
+  q.opts.forEach((text, idx) => {
+    const b = document.createElement("button");
+    b.className = "opt";
+    b.type = "button";
+    b.innerHTML = '<span class="k">' + letters[idx] + "</span><span>" + text + "</span>";
+    b.addEventListener("click", () => answer(idx));
+    box.appendChild(b);
+  });
+
+  $("explain").classList.remove("show");
+  const next = $("btn-next");
+  next.disabled = true;
+  next.textContent = state.i === state.quiz.length - 1 ? "Vedi il risultato →" : "Avanti →";
+}
+
+function answer(idx){
+  if(state.answered) return;
+  state.answered = true;
+  const q = state.quiz[state.i];
+  const btns = Array.from(document.querySelectorAll(".opt"));
+  btns.forEach((b, i) => {
+    b.disabled = true;
+    if(i === q.correct) b.classList.add("right");
+    else if(i === idx) b.classList.add("wrong");
+    else b.classList.add("faded");
+  });
+  const ok = idx === q.correct;
+  state.results.push({ m: q.m, q: q.q, given: q.opts[idx], correctText: q.opts[q.correct], e: q.e, ok });
+
+  $("explain-label").textContent = ok ? "Esatto · spiegazione" : "Non proprio · spiegazione";
+  $("explain-text").textContent = q.e;
+  $("explain").classList.add("show");
+
+  $("bar-fill").style.width = ((state.i + 1) / state.quiz.length * 100) + "%";
+  const next = $("btn-next");
+  next.disabled = false;
+  next.focus();
+}
+
+function nextQuestion(){
+  if(!state.answered) return;
+  if(state.i < state.quiz.length - 1){
+    state.i++;
+    renderQuestion();
+    window.scrollTo({top:0});
+  } else {
+    renderResult();
+  }
+}
+
+/* ---------- risultati ---------- */
+function renderResult(){
+  const tot = state.results.length;
+  const okN = state.results.filter(r => r.ok).length;
+  const pct = Math.round(okN / tot * 100);
+
+  $("score").innerHTML = okN + "<small> / " + tot + " (" + pct + "%)</small>";
+  const trenta = Math.round(pct * 30 / 100);
+  $("trent").textContent = "equivalente indicativo: " + trenta + "/30 · soglia d'esame: 18/30";
+
+  const stamp = $("stamp");
+  if(pct >= 90){
+    stamp.style.setProperty("--stamp", "var(--green)");
+    $("stamp-main").textContent = "IDONEA";
+    $("stamp-sub").textContent = "con lode";
+  } else if(pct >= 60){
+    stamp.style.setProperty("--stamp", "var(--green)");
+    $("stamp-main").textContent = "IDONEA";
+    $("stamp-sub").textContent = "esito positivo";
+  } else {
+    stamp.style.setProperty("--stamp", "var(--bordeaux)");
+    $("stamp-main").textContent = "RIPASSA";
+    $("stamp-sub").textContent = "e riprova";
+  }
+
+  // andamento per materia
+  const bd = $("breakdown");
+  bd.innerHTML = "";
+  Object.entries(SUBJECTS).forEach(([key, s]) => {
+    const rs = state.results.filter(r => r.m === key);
+    if(rs.length === 0) return;
+    const good = rs.filter(r => r.ok).length;
+    const p = Math.round(good / rs.length * 100);
+    const row = document.createElement("div");
+    row.className = "row";
+    row.innerHTML =
+      '<span class="name">' + s.short + "</span>" +
+      '<span class="track"><i style="--sub:' + s.color + ';width:' + p + '%"></i></span>' +
+      '<span class="val">' + good + "/" + rs.length + "</span>";
+    bd.appendChild(row);
+  });
+
+  // errori da ripassare
+  const rev = $("review");
+  rev.innerHTML = "";
+  const wrong = state.results.filter(r => !r.ok);
+  if(wrong.length === 0){
+    rev.innerHTML = '<p class="allright">Nessun errore: nemmeno la Cassazione avrebbe da ridire.</p>';
+  } else {
+    wrong.forEach(r => {
+      const d = document.createElement("div");
+      d.className = "rev";
+      d.style.setProperty("--sub", SUBJECTS[r.m].color);
+      d.innerHTML =
+        '<p class="q">' + r.q + "</p>" +
+        '<p><span class="ko">' + r.given + "</span></p>" +
+        '<p><span class="ok">✓ ' + r.correctText + "</span></p>" +
+        '<p class="e">' + r.e + "</p>";
+      rev.appendChild(d);
+    });
+  }
+  show("result");
+}
+
+/* ---------- eventi ---------- */
+$("btn-start").addEventListener("click", startQuiz);
+$("btn-next").addEventListener("click", nextQuestion);
+$("btn-quit").addEventListener("click", () => { updateHint(); show("start"); });
+$("btn-again").addEventListener("click", startQuiz);
+$("btn-settings").addEventListener("click", () => { updateHint(); show("start"); });
+
+document.addEventListener("keydown", e => {
+  if(screens.quiz.classList.contains("hidden")) return;
+  const map = { "1":0, "2":1, "3":2, "4":3, "a":0, "b":1, "c":2, "d":3 };
+  const k = e.key.toLowerCase();
+  if(!state.answered && k in map){
+    const btns = document.querySelectorAll(".opt");
+    if(btns[map[k]]) btns[map[k]].click();
+  } else if(state.answered && (e.key === "Enter" || e.key === " ")){
+    if(document.activeElement !== $("btn-next")) { e.preventDefault(); nextQuestion(); }
+  }
+});
+
+buildStart();
+</script>
+</body>
+</html>
